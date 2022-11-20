@@ -6,13 +6,25 @@ import {
   CartItemQuantityDiv,
 } from '@/components/Cart/CartItemStyle';
 import { CartItemType } from '@/components/Cart/types'
+import { useAppDispatch } from '@/hooks/store-hooks';
+import { increaseItemInCart, removeItemFromCart } from '@/store/cartSlice';
 
 interface CartItemProps {
   item: CartItemType;
 }
 
 function CartItem({ item }: CartItemProps) {
-  const { title, quantity, totalPrice, price } = item;
+  const {id, title, quantity, totalPrice, price } = item;
+  const dispatch = useAppDispatch();
+
+  const increaseItemHandler = () => {
+    dispatch(increaseItemInCart(id));
+  }
+
+  const decreaseItemHandler = () => {
+    dispatch(removeItemFromCart(id));
+  }
+
   return (
     <CartItemLI>
       <header>
@@ -26,8 +38,8 @@ function CartItem({ item }: CartItemProps) {
           x <span>{quantity}</span>
         </CartItemQuantityDiv>
         <CartItemActionsDiv>
-          <button>-</button>
-          <button>+</button>
+          <button onClick={decreaseItemHandler}>-</button>
+          <button onClick={increaseItemHandler}>+</button>
         </CartItemActionsDiv>
       </CartItemDetailsDiv>
     </CartItemLI>

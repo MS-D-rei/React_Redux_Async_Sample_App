@@ -10,7 +10,9 @@ function Cart() {
       <ul>
         {cartItems.map((cartItem) => (
           <CartItem
+            key={cartItem.id}
             item={{
+              id: cartItem.id,
               title: cartItem.title,
               quantity: cartItem.quantity,
               price: cartItem.price,
