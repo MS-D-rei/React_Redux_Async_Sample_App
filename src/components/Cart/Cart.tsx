@@ -7,7 +7,7 @@ function Cart() {
       <h2>Your Shopping Cart</h2>
       <ul>
         <CartItem
-          item={{ title: 'Test Item', quantity: 3, total: 18, price: 6 }}
+          item={{ title: 'Test Item', quantity: 3, price: 6, totalPrice: 18 }}
         />
       </ul>
     </Card>
