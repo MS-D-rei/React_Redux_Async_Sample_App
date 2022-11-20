@@ -1,14 +1,23 @@
 import Card from '@/components/UI/Card';
+import { useAppSelector } from '@/hooks/store-hooks';
 import CartItem from './CartItem';
 
 function Cart() {
+  const cartItems = useAppSelector((state) => state.cart.items);
   return (
     <Card className="cart">
       <h2>Your Shopping Cart</h2>
       <ul>
-        <CartItem
-          item={{ title: 'Test Item', quantity: 3, price: 6, totalPrice: 18 }}
-        />
+        {cartItems.map((cartItem) => (
+          <CartItem
+            item={{
+              title: cartItem.title,
+              quantity: cartItem.quantity,
+              price: cartItem.price,
+              totalPrice: cartItem.totalPrice,
+            }}
+          />
+        ))}
       </ul>
     </Card>
   );
