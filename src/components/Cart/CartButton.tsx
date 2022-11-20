@@ -4,7 +4,7 @@ import { toggle } from "@/store/uiSlice";
 
 function CartButton() {
   const dispatch = useAppDispatch();
-  const isCartVisible = useAppSelector((state) => state.ui.isCartVisible)
+  const cartQuantity = useAppSelector((state) => state.cart.totalQuantity);
 
   const toggleCartHandler = () => {
     dispatch(toggle());
@@ -13,7 +13,7 @@ function CartButton() {
   return (
     <CartButtonButton onClick={toggleCartHandler}>
       <span>My Cart</span>
-      <CartButtonBadgeSpan>1</CartButtonBadgeSpan>
+      <CartButtonBadgeSpan>{cartQuantity}</CartButtonBadgeSpan>
     </CartButtonButton>
   )
 }
