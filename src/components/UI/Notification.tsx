@@ -1,12 +1,12 @@
 import { NotificationSection } from '@/components/UI/NotificationStyle';
+import { NotificationType } from './types';
 
 interface NotificationProps {
-  status: string;
-  title: string;
-  message: string;
+  content: NotificationType | null;
 }
 
-function Notification({ status, title, message }: NotificationProps) {
+function Notification({ content }: NotificationProps) {
+  const { status, title, message } = content!;
   let sectionClass = '';
 
   if (status === 'error') {

@@ -1,28 +1,33 @@
 import Layout from '@/components/Layout/Layout';
 import Cart from '@/components/Cart/Cart';
 import Products from '@/components/Shop/Products';
-import { useAppSelector } from './hooks/store-hooks';
+import { useAppDispatch, useAppSelector } from '@/hooks/store-hooks';
 import { useEffect } from 'react';
+import { useFirebaseCart } from '@/hooks/firebase-hooks';
+import Notification from '@/components/UI/Notification';
 
-const firebaseURL =
-  'https://react-httprequest-sample-default-rtdb.asia-southeast1.firebasedatabase.app/cart.json';
+const firebaseRequestConfig = {
+  url: 'https://react-httprequest-sample-default-rtdb.asia-southeast1.firebasedatabase.app/cart.json',
+};
 
 function App() {
   const isCartVisible = useAppSelector((state) => state.ui.isCartVisible);
   const cart = useAppSelector((state) => state.cart);
+  const { sendPutRequest } = useFirebaseCart(firebaseRequestConfig);
+  const notification = useAppSelector((state) => state.ui.notification);
 
   useEffect(() => {
-    fetch(firebaseURL, {
-      method: 'PUT',
-      body: JSON.stringify(cart),
-    });
+    sendPutRequest(cart);
   }, [cart]);
 
   return (
-    <Layout>
-      {isCartVisible && <Cart />}
-      <Products />
-    </Layout>
+    <>
+      {!!notification && <Notification content={notification} />}
+      <Layout>
+        {isCartVisible && <Cart />}
+        <Products />
+      </Layout>
+    </>
   );
 }
 
