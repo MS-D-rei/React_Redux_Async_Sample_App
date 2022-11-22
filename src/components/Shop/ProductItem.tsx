@@ -23,6 +23,7 @@ function ProductItem({ id, title, price, description }: ProductItemProps) {
       id: id,
       title: title,
       price: price,
+      description: description,
     }));
   }
 
