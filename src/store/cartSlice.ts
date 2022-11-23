@@ -8,18 +8,19 @@ import {
 } from '@reduxjs/toolkit';
 import { CartItemType } from '@/components/Cart/types';
 import { ProductType } from '@/components/Shop/types';
-import { useAppDispatch } from '@/hooks/store-hooks';
 import { showNotification } from '@/store/uiSlice';
 import { RootState } from './store';
 
 export interface CartState {
   items: CartItemType[];
   totalQuantity: number;
+  isChanged: boolean;
 }
 
 const initialCartState: CartState = {
   items: [],
   totalQuantity: 0,
+  isChanged: false,
 };
 
 /* Rules of Reducers */
@@ -36,6 +37,7 @@ const cartSlice = createSlice({
       const newItem = action.payload;
       const existingItem = state.items.find((item) => item.id === newItem.id);
       state.totalQuantity += 1;
+      state.isChanged = true;
       if (!existingItem) {
         state.items.push({
           id: newItem.id,

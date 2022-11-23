@@ -3,7 +3,6 @@ import Cart from '@/components/Cart/Cart';
 import Products from '@/components/Shop/Products';
 import { useAppDispatch, useAppSelector } from '@/hooks/store-hooks';
 import { useEffect } from 'react';
-import { useFirebaseCart } from '@/hooks/firebase-hooks';
 import Notification from '@/components/UI/Notification';
 import { getCartData, sendCartData } from './store/cartSlice';
 
@@ -28,7 +27,9 @@ function App() {
       isInitial = false;
       return;
     }
-    dispatch(sendCartData(cart));
+    if (cart.isChanged) {
+      dispatch(sendCartData(cart));
+    }
   }, [cart, dispatch]);
 
   return (
