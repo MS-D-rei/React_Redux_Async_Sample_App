@@ -28,6 +28,10 @@ const cartSlice = createSlice({
   name: 'cart',
   initialState: initialCartState,
   reducers: {
+    replaceCart: (state, action: PayloadAction<CartState>) => {
+      state.items = action.payload.items || [];
+      state.totalQuantity = action.payload.totalQuantity || 0;
+    },
     addItemToCart: (state, action: PayloadAction<ProductType>) => {
       const newItem = action.payload;
       const existingItem = state.items.find((item) => item.id === newItem.id);
@@ -143,7 +147,8 @@ export const getCartData = () => {
       if (!response.ok) {
         throw new Error('Could not fetch cart data');
       }
-      const data = response.json();
+      const data: CartState = await response.json();
+      dispatch(cartSlice.actions.replaceCart(data));
     } catch (err) {
       if (err instanceof Error) {
         console.log(err);
