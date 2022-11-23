@@ -5,20 +5,27 @@ import { useAppDispatch, useAppSelector } from '@/hooks/store-hooks';
 import { useEffect } from 'react';
 import { useFirebaseCart } from '@/hooks/firebase-hooks';
 import Notification from '@/components/UI/Notification';
+import { sendCartData } from './store/cartSlice';
 
 const firebaseRequestConfig = {
   url: 'https://react-httprequest-sample-default-rtdb.asia-southeast1.firebasedatabase.app/cart.json',
 };
 
+let isInitial = true;
+
 function App() {
+  const dispatch = useAppDispatch();
   const isCartVisible = useAppSelector((state) => state.ui.isCartVisible);
   const cart = useAppSelector((state) => state.cart);
-  const { sendPutRequest } = useFirebaseCart(firebaseRequestConfig);
   const notification = useAppSelector((state) => state.ui.notification);
 
   useEffect(() => {
-    sendPutRequest(cart);
-  }, [cart]);
+    if (isInitial) {
+      isInitial = false;
+      return;
+    }
+    dispatch(sendCartData(cart));
+  }, [cart, dispatch]);
 
   return (
     <>

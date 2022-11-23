@@ -1,6 +1,16 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {
+  AnyAction,
+  createSlice,
+  Dispatch,
+  PayloadAction,
+  ThunkAction,
+  ThunkDispatch,
+} from '@reduxjs/toolkit';
 import { CartItemType } from '@/components/Cart/types';
 import { ProductType } from '@/components/Shop/types';
+import { useAppDispatch } from '@/hooks/store-hooks';
+import { showNotification } from '@/store/uiSlice';
+import { RootState } from './store';
 
 export interface CartState {
   items: CartItemType[];
@@ -12,6 +22,8 @@ const initialCartState: CartState = {
   totalQuantity: 0,
 };
 
+/* Rules of Reducers */
+/* https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers#rules-of-reducers */
 const cartSlice = createSlice({
   name: 'cart',
   initialState: initialCartState,
@@ -53,6 +65,101 @@ const cartSlice = createSlice({
     },
   },
 });
+
+/* Writing Logic with Thunks */
+/* https://redux.js.org/usage/writing-logic-thunks#using-createasyncthunk */
+
+/* Type Checking Redux Thunks */
+/* https://redux.js.org/usage/usage-with-typescript#type-checking-redux-thunks */
+// const dispatch = useAppDispatch();
+/* const dispatch: ThunkDispatch<{
+  ui: UIState;
+  cart: CartState;
+}, undefined, AnyAction> & Dispatch<AnyAction>
+*/
+
+// sendCartData is a thunk action creator
+export const sendCartData = (cart: CartState) => {
+  // return a thunk function
+  return async (
+    dispatch: ThunkDispatch<RootState, undefined, AnyAction> &
+      Dispatch<AnyAction>
+  ) => {
+    const firebaseRequest = {
+      url: 'https://react-httprequest-sample-default-rtdb.asia-southeast1.firebasedatabase.app/cart.json',
+    };
+    dispatch(
+      showNotification({
+        status: 'pending',
+        title: 'Sending...',
+        message: 'Sending cart data',
+      })
+    );
+    try {
+      const response = await fetch(firebaseRequest.url, {
+        method: 'PUT',
+        body: JSON.stringify(cart),
+        headers: {
+          'Context-Type': 'application/json',
+        },
+      });
+      console.log(response);
+      const data = await response.json();
+      console.log(data);
+      dispatch(
+        showNotification({
+          status: 'success',
+          title: 'Success',
+          message: 'Sent cart data successfully',
+        })
+      );
+    } catch (err) {
+      if (err instanceof Error) {
+        console.log(err);
+        dispatch(
+          showNotification({
+            status: 'error',
+            title: 'Error',
+            message: 'Sending cart data failed',
+          })
+        );
+      } else {
+        console.log(`Unexpected Error: ${err}`);
+      }
+    }
+  };
+};
+
+export const getCartData = () => {
+  return async (
+    dispatch: ThunkDispatch<RootState, undefined, AnyAction> &
+      Dispatch<AnyAction>
+  ) => {
+    const firebaseRequest = {
+      url: 'https://react-httprequest-sample-default-rtdb.asia-southeast1.firebasedatabase.app/cart.json',
+    };
+    try {
+      const response = await fetch(firebaseRequest.url);
+      if (!response.ok) {
+        throw new Error('Could not fetch cart data');
+      }
+      const data = response.json();
+    } catch (err) {
+      if (err instanceof Error) {
+        console.log(err);
+        dispatch(
+          showNotification({
+            status: 'error',
+            title: 'Error',
+            message: 'Fetching cart data failed',
+          })
+        );
+      } else {
+        console.log(`Unexpected Error: ${err}`);
+      }
+    }
+  };
+};
 
 export const { addItemToCart, increaseItemInCart, removeItemFromCart } =
   cartSlice.actions;
